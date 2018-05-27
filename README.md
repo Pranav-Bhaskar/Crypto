@@ -1,5 +1,5 @@
 # Crypto
-This tool can be used to encrypt or decrypt any UTF-8 file.
+This tool can be used to encrypt or decrypt any UTF-8 (TEXT) file.
   
 # Installation
  Extract the zip which you will download.
