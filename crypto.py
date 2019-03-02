@@ -10,6 +10,8 @@ options = """		Menu
 	"""
 num2b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
+b642num = { x : i for x, i in zip(num2b64, range(0, len(num2b64)))}
+
 def GetFileName():
 	try:
 		ifPath = str(raw_input('Enter File Name : ').strip())
@@ -30,12 +32,10 @@ def E64():
 		for x in f:
 			bytes.append(bin(x)[2:].zfill(8))
 		bytes = ''.join(bytes)
-		if len(bytes) % 3 == 1:
-			bytes += '00'
-			pad = '='
-		elif len(bytes) % 3 == 2:
-			bytes += '0'
-			pad = '=='
+		pad = ''
+		if len(bytes) % 6 != 0:
+			pad = '='*(len(bytes)%3)
+			bytes += '0'*(6 - (len(bytes)%6))
 		encoded = []
 		for x in range(0, len(bytes), 6):
 			oneSec = int(bytes[x:x+6], 2)
@@ -44,8 +44,31 @@ def E64():
 		encoded += pad
 		ofPath, ofName = os.path.split(ifName)
 		ofName += '.b64'
-		with open(ofName, 'w') as f:
+		with open(os.path.join(ofPath, ofName), 'w') as f:
 			f.write(encoded)
+		print('File Saved As ' + ofName)
+
+def D64():
+	ifName = GetFileName()
+	if ifName:
+		f = open(ifName, 'r')
+		base64 = f.readline().strip()
+		f.close()
+		pad = base64.count('=')
+		if pad:
+			base64 = base64[:-pad]
+			pad = 3 - pad
+		byte = [bin(b642num[x])[2:].zfill(6) for x in base64]
+		byte = ''.join(byte)
+		if pad:
+			byte = byte[:-pad]
+		data = []
+		for x in range(0, len(byte), 8):
+			data.append(int(byte[x:x+8], 2))
+		ofPath, ofName = os.path.split(ifName)
+		ofName += '.b64'
+		with open(os.path.join(ofPath, ofName), 'wb') as f:
+			f.write(bytes(data))
 		print('File Saved As ' + ofName)
 
 def menu():
@@ -61,13 +84,13 @@ def menu():
 		E64()
 		return True
 	elif opt == 2:
-		Esc()
+		#Esc()
 		return True
 	elif opt == 3:
 		D64()
 		return True
 	elif opt == 4:
-		Dsc()
+		#Dsc()
 		return True
 	return False
 
