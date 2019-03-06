@@ -71,6 +71,33 @@ def D64():
 			f.write(bytes(data))
 		print('File Saved As ' + ofName)
 
+def Shc(sign):
+	ifName = GetFileName()
+	if ifName:
+		try:
+			key = int(input('Enter Key : '))
+		except ValueError:
+			print('Try Entering NUMBERS for a change')
+			return
+		data = ''
+		with open(ifName, 'r') as f:
+			for line in f:
+				data += line
+		enc = ''
+		for x in data:
+			if x.isdigit():
+				x = chr(((ord(x) - ord('0')) + (sign*(key%10)))%10 + ord('0'))
+			elif x.islower():
+				x = chr(((ord(x) - ord('a')) + (sign*(key%26)))%26 + ord('a'))
+			elif x.isupper():
+				x = chr(((ord(x) - ord('A')) + (sign*(key%26)))%26 + ord('A'))
+			enc += x
+		ofPath, ofName = os.path.split(ifName)
+		ofName += '.shc'
+		with open(os.path.join(ofPath, ofName), 'w') as f:
+			f.write(enc)
+		print('File Saved As ' + ofName)
+
 def menu():
 	print(options)
 	try:
@@ -84,13 +111,13 @@ def menu():
 		E64()
 		return True
 	elif opt == 2:
-		#Esc()
+		Shc(+1)
 		return True
 	elif opt == 3:
 		D64()
 		return True
 	elif opt == 4:
-		#Dsc()
+		Shc(-1)
 		return True
 	return False
 
