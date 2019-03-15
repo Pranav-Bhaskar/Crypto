@@ -6,6 +6,7 @@ options = """		Menu
 	2. Encode using ShiftCypher
 	3. Decode using base64
 	4. Decode using ShiftCypher
+	5. Encode/Decode using XOR
 	Any other NUMBER to EXIT
 	"""
 num2b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -98,6 +99,29 @@ def Shc(sign):
 			f.write(enc)
 		print('File Saved As ' + ofName)
 
+def Xor():
+	ifName = GetFileName()
+	if ifName:
+		f = open(ifName, 'rb').read()
+		byt = []
+		for x in f:
+			byt.append(bin(x)[2:].zfill(8))
+		byt = ''.join(byt)
+		pas = [bin(ord(x))[2:] for x in input('Enter Key : ').strip()]
+		pas = ''.join(pas)
+		encByte = []
+		for x in range(len(byt)):
+			encByte.append(str(int(byt[x])^int(pas[x%len(pas)])))
+		encByte = ''.join(encByte)
+		ofPath, ofName = os.path.split(ifName)
+		ofName += '.xor'
+		data = []
+		for x in range(0, len(encByte), 8):
+			data.append(int(encByte[x:x + 8], 2))
+		with open(os.path.join(ofPath, ofName), 'wb') as f:
+			f.write(bytes(data))
+		print('File Saved As ' + ofName)		
+
 def menu():
 	print(options)
 	try:
@@ -118,6 +142,9 @@ def menu():
 		return True
 	elif opt == 4:
 		Shc(-1)
+		return True
+	elif opt == 5:
+		Xor()
 		return True
 	return False
 
