@@ -3,10 +3,12 @@ import os
 
 options = """		Menu
 	1. Encode using base64
-	2. Encode using ShiftCypher
-	3. Decode using base64
-	4. Decode using ShiftCypher
-	5. Encode/Decode using XOR
+	2. Encode using Shift Cipher
+	3. Encode using Vigenere Cipher
+	4. Decode using base64
+	5. Decode using Shift Cipher
+	6. Decode using Vigenere Cipher
+	7. Encode/Decode using XOR
 	Any other NUMBER to EXIT
 	"""
 num2b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -120,7 +122,39 @@ def Xor():
 			data.append(int(encByte[x:x + 8], 2))
 		with open(os.path.join(ofPath, ofName), 'wb') as f:
 			f.write(bytes(data))
-		print('File Saved As ' + ofName)		
+		print('File Saved As ' + ofName)
+
+def Vig(sign):
+	ifName = GetFileName()
+	if ifName:
+		f = open
+		key = []
+		for x in str(input('Enter Key : ')):
+			if x.lower():
+				key.append(ord(x) - ord('a'))
+			else:
+				key.append(ord(x) - ord('A'))
+		data = ''
+		with open(ifName, 'r') as f:
+			for line in f:
+				data += line
+				enc = ''
+		i = 0
+		for x in data:
+			if x.islower():
+				x = chr(((ord(x) - ord('a')) + (sign*(key[i]%26)))%26 + ord('a'))
+				i += 1
+			elif x.isupper():
+				x = chr(((ord(x) - ord('A')) + (sign*(key[i]%26)))%26 + ord('A'))
+				i += 1
+			if i == len(key):
+				i = 0
+			enc += x
+		ofPath, ofName = os.path.split(ifName)
+		ofName += '.vig'
+		with open(os.path.join(ofPath, ofName), 'w') as f:
+			f.write(enc)
+		print('File Saved As ' + ofName)
 
 def menu():
 	print(options)
@@ -138,12 +172,18 @@ def menu():
 		Shc(+1)
 		return True
 	elif opt == 3:
-		D64()
+		Vig(+1)
 		return True
 	elif opt == 4:
-		Shc(-1)
+		D64()
 		return True
 	elif opt == 5:
+		Shc(-1)
+		return True
+	elif opt == 6:
+		Vig(-1)
+		return True
+	elif opt == 7:
 		Xor()
 		return True
 	return False
